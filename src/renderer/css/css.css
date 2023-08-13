@@ -1,0 +1,76 @@
+body::-webkit-scrollbar {
+    display: none;
+}
+html,
+body {
+    margin: 0;
+}
+
+.main {
+    height: 100vh;
+    width: 100vw;
+    background-color: var(--bg);
+    position: absolute;
+}
+
+#chat > div {
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+#chat > .system {
+}
+#chat > .assistant {
+    background-color: #efefef;
+}
+#chat > .user {
+}
+
+button {
+    border-radius: 0;
+    background-color: var(--bg);
+    height: var(--height);
+    border: none;
+    outline: none;
+    margin: 0px;
+    color: var(--color);
+    padding: 0;
+    transition: var(--transition);
+    cursor: pointer;
+    background-position: center;
+    background-size: cover;
+    width: var(--b-button);
+    height: var(--b-button);
+    position: relative;
+}
+button:hover {
+    background-color: var(--hover-color);
+}
+select {
+    border-radius: 0;
+    background-color: var(--bg);
+    height: var(--height);
+    border: none;
+    outline: none;
+    margin: 0px;
+    color: var(--color);
+    font-size: var(--font-size);
+    padding: 0 var(--o-padding) 0 var(--o-padding);
+    transition: var(--transition);
+    user-select: none;
+}
+select:hover {
+    background-color: var(--hover-color);
+}
+option {
+    font-size: var(--font-size);
+    background-color: var(--bg);
+}
+button > .icon {
+    width: var(--b-button);
+}
+
+@media (prefers-color-scheme: dark) {
+    .find_h_h {
+        background-color: #ffffff40;
+    }
+}

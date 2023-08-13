@@ -1,0 +1,37 @@
+{
+    "name": "rpi-pen",
+    "version": "0.0.1",
+    "description": "树莓派笔",
+    "main": "./out/main/main.js",
+    "scripts": {
+        "pack": "npm run build && electron-builder --dir -c electron-builder.config.js",
+        "dist": "npm run build && electron-builder -p never -c electron-builder.config.js",
+        "start": "electron-vite --ignoreConfigWarning preview",
+        "dev": "electron-vite --ignoreConfigWarning dev",
+        "build": "electron-vite --ignoreConfigWarning build"
+    },
+    "author": {
+        "name": "xsf",
+        "email": "xushengfeng_zg@163.com"
+    },
+    "homepage": "https://github.com/xushengfeng/eSearch/",
+    "license": "GPL-3.0",
+    "dependencies": {
+        "color": "^4.2.3",
+        "electron-store": "^8.1.0",
+        "esearch-ocr": "^4.1.0",
+        "hex-to-css-filter": "^5.4.0",
+        "onnxruntime-node": "^1.13.1",
+        "opencv.js": "^1.2.1"
+    },
+    "devDependencies": {
+        "@electron-toolkit/tsconfig": "^1.0.1",
+        "@types/color": "^3.0.3",
+        "@types/node": "^18.8.4",
+        "electron": "^22.3.6",
+        "electron-builder": "^24.4.0",
+        "electron-vite": "^1.0.24",
+        "typescript": "^5.1.6",
+        "vite": "^4.4.1"
+    }
+}

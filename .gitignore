@@ -1,0 +1,14 @@
+node_modules
+__pycache__
+readme/todo.md
+out/
+eSearch
+.VSCodeCounter/
+ocr/ppocr
+.DS_Store
+build
+preload_config
+lib/win_rect.exe
+lib/copy.exe
+lib/ffmpeg
+assets/onnx
