@@ -1,5 +1,7 @@
 /// <reference types="vite/client" />
 
+const { exec } = require("child_process") as typeof import("child_process");
+
 var Store = require("electron-store");
 var store = new Store();
 
@@ -59,6 +61,18 @@ function runInput(text: string) {
         eval(x.context);
     }
     if (x.type === "py") {
+    }
+    if (x.type === "shell") {
+        exec(`${x.context}`, (err, std, stde) => {
+            if (!err) {
+                if (std) {
+                    page.push({ content: std, type: "shell", isOutput: true });
+                }
+                if (stde) {
+                    page.push({ content: stde, type: "shell", isOutput: true });
+                }
+            }
+        });
     }
 }
 
