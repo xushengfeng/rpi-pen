@@ -187,6 +187,7 @@ var defaultSetting: setting = {
         大小: 16,
     },
     ai: { keys: [] },
+    dics: [],
     OCR: {
         类型: "默认",
         离线切换: true,
