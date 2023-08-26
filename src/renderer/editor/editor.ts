@@ -109,6 +109,7 @@ function pushToPage(content: string, type: input, isOutput?: boolean) {
     historyStore.set(`${pageName}.page`, page);
     if (!historyStore.get(`${pageName}.name`)) {
         historyStore.set(`${pageName}.name`, page.at(0)?.content || "name");
+        initHistory();
     }
 }
 
@@ -280,6 +281,58 @@ function searchDic(text: string) {
 
     return mainDiv;
 }
+
+/************************************历史 */
+const historyEl = document.getElementById("history");
+const historyIHeight = 16;
+let historyDivs: HTMLElement[] = [];
+
+function initHistory() {
+    let hisHightEl = document.createElement("div");
+    hisHightEl.style.height = Object.keys(historyStore.store).length * historyIHeight + "px";
+    historyEl.innerHTML = "";
+    historyEl.append(hisHightEl);
+    for (let i in historyStore.store) {
+        console.log(i);
+        let n = 0;
+        let div = document.createElement("div");
+        div.setAttribute("data-i", String(n));
+        div.innerText = historyStore.get(i).name;
+        div.onclick = () => {
+            page = historyStore.get(i).page;
+            pageName = i as `${string}-${string}-${string}-${string}-${string}`;
+            renderPage(page);
+            switchToItem("main");
+        };
+        n++;
+        historyDivs.push(div);
+    }
+    renderHistoryL();
+}
+initHistory();
+
+function renderHistoryL() {
+    let top = historyEl.scrollTop;
+    let b = top + historyEl.offsetHeight;
+    let start = Math.floor(top / historyIHeight);
+    let len = Math.ceil((b - top) / historyIHeight);
+    let has = [];
+    for (let el of historyEl.querySelector("div").children) {
+        let eli = Number(el.getAttribute("data-i"));
+        if (eli < start || start + len < eli) {
+            el.remove();
+        } else {
+            has.push(eli);
+        }
+    }
+    for (let i = start; i < Math.min(historyDivs.length, start + len); i++) {
+        if (!has.includes(i)) historyEl.querySelector("div").append(historyDivs[i]);
+    }
+}
+
+historyEl.onscroll = () => {
+    renderHistoryL();
+};
 
 /************************************引入 */
 const fs = require("fs") as typeof import("fs");
