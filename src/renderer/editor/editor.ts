@@ -5,6 +5,8 @@ const { exec } = require("child_process") as typeof import("child_process");
 var Store = require("electron-store");
 var store = new Store();
 
+const Mdict = require("js-mdict").default as typeof import("js-mdict").Mdict;
+
 /************************************UI */
 document.getElementById("b_main").onclick = () => {
     document.getElementById("main").classList.add("show");
@@ -57,6 +59,10 @@ function runInput(text: string) {
         aiMessages.push(page.length - 1);
         ai();
     }
+    if (x.type === "search") {
+        page.push({ content: x.context, type: x.type, isOutput: true });
+        renderPage(page);
+    }
     if (x.type === "js") {
         eval(x.context);
     }
@@ -89,7 +95,11 @@ function renderPage(p: typeof page) {
         if (p[i]) {
             if (!chatEl.querySelector(`[data-id="${i}"]`)) {
                 let div = document.createElement("div");
-                div.innerHTML = p[i].content;
+                if (p[i].type === "search" && p[i].isOutput) {
+                    div.append(searchDic(p[i].content));
+                } else {
+                    div.innerHTML = p[i].content;
+                }
                 div.classList.add(p[i].isOutput ? "output" : "input");
                 div.setAttribute("data-id", i);
                 chatEl.append(div);
@@ -159,6 +169,85 @@ function ai() {
                 renderPage(page);
             });
     });
+}
+let dicPath: { name: string; path: { mdd: string; mdx: string } }[] = [{ name: "ox", path: { mdd: "", mdx: "" } }];
+let dicList: { [key: string]: { mdd: import("js-mdict").Mdict; mdx: import("js-mdict").Mdict } } = {};
+var MIME = {
+    css: "text/css",
+    img: "image",
+    jpg: "image/jpeg",
+    png: "image/png",
+    svg: "image/svg+xml",
+    spx: "audio/x-speex",
+    wav: "audio/wav",
+    mp3: "audio/mp3",
+    js: "text/javascript",
+};
+function getDicSorce(src: string) {}
+function initDic() {
+    dicList["ox"] = {
+        mdd: new Mdict("assets/dics/牛津高阶英汉双解词典（第9版）.mdd"),
+        mdx: new Mdict("assets/dics/牛津高阶英汉双解词典（第9版）.mdx"),
+    };
+}
+initDic();
+function searchDic(text: string) {
+    let mainDiv = document.createElement("div");
+    for (let i of dicPath) {
+        const dict = dicList[i.name].mdx;
+        const dict1 = dicList[i.name].mdd;
+        let div = document.createElement("div");
+        div.innerHTML = dict.lookup(text).definition;
+        div.querySelectorAll("a").forEach((el) => {
+            if (el.href.includes("entry://")) {
+                el.addEventListener("click", () => {
+                    page.push({ content: el.href.replace("entry://", ""), type: "search" });
+                    renderPage(page);
+                });
+            } else {
+            }
+            el.removeAttribute("href");
+        });
+        div.querySelectorAll("link").forEach((el) => {
+            console.log(`\\${el.href}`);
+            let newEl = document.createElement("style");
+            let b64 = dict1.lookup(`\\${el.getAttribute("href")}`).definition;
+            let styleText = decodeURIComponent(escape(window.atob(b64)));
+            styleText = styleText.replace(/url\((.+)\)/g, (_a, $1: string) => {
+                console.log($1);
+                let src = dict1.lookup(`\\${$1.replaceAll(/['"]/g, "")}`).definition;
+                return `url("data:font/ttf;base64,${src}")`;
+            });
+            newEl.innerHTML = styleText;
+            el.outerHTML = newEl.outerHTML;
+        });
+        div.querySelectorAll("img").forEach((el) => {
+            let src = el.getAttribute("src");
+            console.log(`\\${src}`);
+
+            let b64 = dict1.lookup(`\\${src}`).definition;
+            el.src = `data:${src.endsWith(".svg") ? MIME.svg : MIME.img};base64,${b64}`;
+        });
+        div.querySelectorAll("script").forEach((el) => {
+            let src = el.getAttribute("src");
+            console.log(`\\${src}`);
+
+            let b64 = dict1.lookup(`\\${src}`).definition;
+            let newEl = document.createElement("script");
+            newEl.src = `data:${MIME.js};base64,${b64}`;
+            el.remove();
+            div.append(newEl);
+        });
+
+        let sum = document.createElement("summary");
+        sum.innerText = i.name;
+        let details = document.createElement("details");
+        details.append(div);
+        sum.append(details);
+        mainDiv.append(sum);
+    }
+
+    return mainDiv;
 }
 
 /************************************引入 */
