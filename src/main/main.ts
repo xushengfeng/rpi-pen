@@ -113,14 +113,6 @@ app.whenReady().then(() => {
     // 初始化设置
     Store.initRenderer();
 
-    // 启动时提示
-    if (firstOpen && store.get("启动提示"))
-        new Notification({
-            title: app.name,
-            body: `${app.name} ${"已经在后台启动"}`,
-            icon: `${runPath}/assets/logo/64x64.png`,
-        }).show();
-
     // tmp目录
     if (!fs.existsSync(os.tmpdir() + "/eSearch")) fs.mkdir(os.tmpdir() + "/eSearch", () => {});
     createMainWindow("editor.html");
@@ -145,7 +137,7 @@ const isMac = process.platform === "darwin";
 // 主页面
 async function createMainWindow(webPage: string, t?: boolean | Array<any>) {
     let mainWindow = new BrowserWindow({
-        fullscreen: true,
+        ...(dev ? { width: 320, height: 172 } : { fullscreen: true }),
         backgroundColor: nativeTheme.shouldUseDarkColors ? "#0f0f0f" : "#ffffff",
         icon: theIcon,
         webPreferences: {
