@@ -288,6 +288,7 @@ const historyIHeight = 16;
 let historyDivs: HTMLElement[] = [];
 
 function initHistory() {
+    historyDivs = [];
     let hisHightEl = document.createElement("div");
     hisHightEl.style.height = Object.keys(historyStore.store).length * historyIHeight + "px";
     historyEl.innerHTML = "";
