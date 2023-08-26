@@ -13,9 +13,23 @@ body {
     position: absolute;
 }
 
+#chat {
+    overflow: auto;
+    height: 90vh;
+}
+#chat ~ * {
+    height: 10vh;
+    display: flex;
+}
+#chat ~ * > input {
+    outline: none;
+    border: none;
+}
+
 #chat > div {
-    padding: 0.5rem;
-    border-radius: 0.5rem;
+    font-size: 12px;
+    padding: 0.2rem;
+    border-radius: 0.2rem;
 }
 #chat > .system {
 }
