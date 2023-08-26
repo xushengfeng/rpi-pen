@@ -4,6 +4,7 @@ body::-webkit-scrollbar {
 html,
 body {
     margin: 0;
+    overflow: hidden;
 }
 
 body > #index {
@@ -31,11 +32,11 @@ body > #index > div > .icon {
 
 .main {
     height: 100vh;
-    width: 100vw;
     position: absolute;
     top: 0;
     display: flex;
     transition: 0.4s;
+    overflow: hidden;
 }
 
 .main > div {
@@ -71,6 +72,10 @@ body > #index > div > .icon {
     font-size: 12px;
     border-radius: 0.2rem;
     overflow: hidden;
+}
+
+#history {
+    overflow: scroll;
 }
 
 button {
