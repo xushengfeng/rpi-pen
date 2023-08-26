@@ -11,25 +11,89 @@ document.getElementById("b_main").onclick = () => {
 
 const inputEl = document.getElementById("main_input") as HTMLInputElement;
 const chatEl = document.getElementById("chat");
-const runAiEl = document.getElementById("run_ai");
-const newAiEl = document.getElementById("new_ai");
+const runEl = document.getElementById("run");
 
-runAiEl.onclick = () => {
-    ai(inputEl.value);
+runEl.onclick = () => {
+    runInput(inputEl.value);
     inputEl.value = "";
 };
-newAiEl.onclick = () => {
-    newAi();
+type input = "e" | "search" | "gpt" | "js" | "py" | "julia" | "shell" | "output";
+
+function analyzeInput(text: string): {
+    type: input;
+    context: string;
+} {
+    if (!text) {
+        return { type: "e", context: "" };
+    } else {
+        if (text.startsWith("@gpt")) {
+            return { type: "gpt", context: text.slice(4) };
+        } else if (text.startsWith("@js")) {
+            return { type: "js", context: text.slice(3) };
+        } else if (text.startsWith("@py")) {
+            return { type: "py", context: text.slice(3) };
+        } else if (text.startsWith("@julia")) {
+            return { type: "julia", context: text.slice(6) };
+        } else if (text.startsWith("!")) {
+            return { type: "shell", context: text.slice(1) };
+        } else {
+            return { type: "search", context: text };
+        }
+    }
+}
+function runInput(text: string) {
+    let x = analyzeInput(text);
+    page.push({ content: x.context, type: x.type });
+    console.log(page);
+    renderPage(page);
+
+    if (x.type === "e") {
+        newPage();
+    }
+    if (x.type === "gpt") {
+        aiMessages.push(page.length - 1);
+        ai();
+    }
+    if (x.type === "js") {
+        eval(x.context);
+    }
+    if (x.type === "py") {
+    }
+}
+
+let page: { type: input; isOutput?: boolean; content: string }[] = [];
+
+function newPage() {
+    page = [];
+    aiMessages = [];
     chatEl.innerHTML = "";
-};
+}
 
-let aiMessages: { role: "system" | "user" | "assistant"; content: string }[] = [];
+function renderPage(p: typeof page) {
+    for (let i in p) {
+        if (p[i]) {
+            if (!chatEl.querySelector(`[data-id="${i}"]`)) {
+                let div = document.createElement("div");
+                div.innerHTML = p[i].content;
+                div.classList.add(p[i].isOutput ? "output" : "input");
+                div.setAttribute("data-id", i);
+                chatEl.append(div);
+            }
+        }
+    }
+}
 
-function ai(text: string) {
+let aiMessages: number[] = [];
+function formalAiMess(m: typeof aiMessages, p: typeof page) {
+    let l: { role: "system" | "user" | "assistant"; content: string }[] = [];
+    for (let i of m) {
+        l.push({ content: p[i].content, role: p[i].isOutput ? "assistant" : "user" });
+    }
+    return l;
+}
+
+function ai() {
     return new Promise((re: (text: string) => void) => {
-        let x = aiMessages.at(-1);
-        if (!x || (x.role != "user" && x.content != text)) aiMessages.push({ role: "user", content: text });
-
         fetch(`https://ai.fakeopen.com/v1/chat/completions`, {
             method: "POST",
             headers: { Authorization: `Bearer ${store.get("ai.keys")[0]}`, "content-type": "application/json" },
@@ -39,37 +103,19 @@ function ai(text: string) {
                 top_p: 1,
                 frequency_penalty: 1,
                 presence_penalty: 1,
-                messages: aiMessages.filter((i) => i),
+                messages: formalAiMess(aiMessages, page),
             }),
         })
             .then((v) => v.json())
             .then((t) => {
                 let answer = t.choices[0].message.content;
                 console.log(answer);
-                aiMessages.push({ role: "assistant", content: answer });
-                renderAi(aiMessages);
+                page.push({ content: answer, type: "gpt", isOutput: true });
+                aiMessages.push(page.length - 1);
                 re(answer);
+                renderPage(page);
             });
     });
-}
-
-function newAi(text?: string) {
-    aiMessages = [];
-    if (text) aiMessages.push({ role: "system", content: text });
-}
-
-function renderAi(m: typeof aiMessages) {
-    for (let i in m) {
-        if (m[i]) {
-            if (!chatEl.querySelector(`[data-id="${i}"]`)) {
-                let div = document.createElement("div");
-                div.innerHTML = m[i].content;
-                div.classList.add(m[i].role);
-                div.setAttribute("data-id", i);
-                chatEl.append(div);
-            }
-        }
-    }
 }
 
 /************************************引入 */

@@ -31,12 +31,10 @@ body {
     padding: 0.2rem;
     border-radius: 0.2rem;
 }
-#chat > .system {
-}
-#chat > .assistant {
+#chat > .output {
     background-color: #efefef;
 }
-#chat > .user {
+#chat > .input {
 }
 
 button {
