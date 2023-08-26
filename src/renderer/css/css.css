@@ -37,6 +37,12 @@ body {
 #chat > .input {
 }
 
+#button-container > button {
+    font-size: 12px;
+    border-radius: 0.2rem;
+    overflow: hidden;
+}
+
 button {
     border-radius: 0;
     background-color: var(--bg);

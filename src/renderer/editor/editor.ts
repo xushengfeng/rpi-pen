@@ -12,6 +12,7 @@ document.getElementById("b_main").onclick = () => {
 const inputEl = document.getElementById("main_input") as HTMLInputElement;
 const chatEl = document.getElementById("chat");
 const runEl = document.getElementById("run");
+const buttonContainer = document.getElementById("button-container");
 
 runEl.onclick = () => {
     runInput(inputEl.value);
@@ -82,6 +83,34 @@ function renderPage(p: typeof page) {
         }
     }
 }
+
+document.addEventListener("selectionchange", () => {
+    const selection = window.getSelection();
+
+    if (selection && !selection.isCollapsed) {
+        const range = selection.getRangeAt(0).getBoundingClientRect();
+
+        const button = document.createElement("button");
+        button.textContent = "搜索";
+
+        const buttonTop = range.top - button.offsetHeight - 5;
+        const buttonLeft = range.right;
+
+        button.style.position = "fixed";
+        button.style.top = buttonTop + "px";
+        button.style.left = buttonLeft + 4 + "px";
+
+        buttonContainer.innerHTML = "";
+        buttonContainer.appendChild(button);
+
+        button.onclick = () => {
+            inputEl.value = selection.toString();
+            buttonContainer.innerHTML = "";
+        };
+    } else {
+        buttonContainer.innerHTML = "";
+    }
+});
 
 let aiMessages: number[] = [];
 function formalAiMess(m: typeof aiMessages, p: typeof page) {
