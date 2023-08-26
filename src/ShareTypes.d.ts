@@ -19,6 +19,7 @@ export interface setting {
     ai: {
         keys: string[];
     };
+    dics: { name: string; path: { mdd: string; mdx: string } }[];
     OCR: {
         类型: string;
         离线切换: boolean;

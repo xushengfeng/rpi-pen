@@ -170,7 +170,7 @@ function ai() {
             });
     });
 }
-let dicPath: { name: string; path: { mdd: string; mdx: string } }[] = [{ name: "ox", path: { mdd: "", mdx: "" } }];
+let dicPath: { name: string; path: { mdd: string; mdx: string } }[] = store.get("dics");
 let dicList: { [key: string]: { mdd: import("js-mdict").Mdict; mdx: import("js-mdict").Mdict } } = {};
 var MIME = {
     css: "text/css",
@@ -185,10 +185,12 @@ var MIME = {
 };
 function getDicSorce(src: string) {}
 function initDic() {
-    dicList["ox"] = {
-        mdd: new Mdict("assets/dics/牛津高阶英汉双解词典（第9版）.mdd"),
-        mdx: new Mdict("assets/dics/牛津高阶英汉双解词典（第9版）.mdx"),
-    };
+    for (let i of dicPath) {
+        dicList[i.name] = {
+            mdd: new Mdict(i.path.mdd),
+            mdx: new Mdict(i.path.mdx),
+        };
+    }
 }
 initDic();
 function searchDic(text: string) {
