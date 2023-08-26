@@ -9,9 +9,19 @@ var historyStore = new Store({ name: "history" });
 const Mdict = require("js-mdict").default as typeof import("js-mdict").Mdict;
 
 /************************************UI */
-document.getElementById("b_main").onclick = () => {
-    document.getElementById("main").classList.add("show");
-};
+const indexEl = document.getElementById("index");
+indexEl.classList.add("hiden");
+indexEl.querySelectorAll("div").forEach((el, i) => {
+    el.onclick = () => {
+        if (el.id.replace("b_", "") === "more") {
+            indexEl.classList.remove("hiden");
+        } else if (el.id.replace("b_", "") === "close") {
+            indexEl.classList.add("hiden");
+        } else {
+            (document.querySelector(".main") as HTMLElement).style.transform = `translateX(${(i - 1) * 100}vw)`;
+        }
+    };
+});
 /************************************main */
 
 const inputEl = document.getElementById("main_input") as HTMLInputElement;

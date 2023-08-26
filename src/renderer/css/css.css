@@ -6,11 +6,38 @@ body {
     margin: 0;
 }
 
+body > #index {
+    display: flex;
+    overflow: hidden;
+    max-width: 100vw;
+    position: fixed;
+    z-index: 1;
+    right: 0;
+    transition: 0.4s;
+}
+body > #index > div {
+    position: relative;
+    width: 16px;
+    height: 16px;
+}
+body > #index > div > .icon {
+    width: 16px;
+    height: 16px;
+}
+
+.hiden {
+    transform: translateX(calc(100% - 16px));
+}
+
 .main {
     height: 100vh;
     width: 100vw;
-    background-color: var(--bg);
     position: absolute;
+    top: 0;
+}
+
+.main > div {
+    background-color: var(--bg);
 }
 
 #chat {
