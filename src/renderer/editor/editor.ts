@@ -13,15 +13,21 @@ const indexEl = document.getElementById("index");
 indexEl.classList.add("hiden");
 indexEl.querySelectorAll("div").forEach((el, i) => {
     el.onclick = () => {
-        if (el.id.replace("b_", "") === "more") {
+        const id = el.id.replace("b_", "");
+        if (id === "more") {
             indexEl.classList.remove("hiden");
-        } else if (el.id.replace("b_", "") === "close") {
+        } else if (id === "close") {
             indexEl.classList.add("hiden");
         } else {
-            (document.querySelector(".main") as HTMLElement).style.transform = `translateX(${(i - 1) * 100}vw)`;
+            switchToItem(id);
         }
     };
 });
+function switchToItem(name: string) {
+    let name2i = ["main", "history", "setting"];
+    let i = name2i.indexOf(name);
+    (document.querySelector(".main") as HTMLElement).style.transform = `translateX(${i * -100}vw)`;
+}
 /************************************main */
 
 const inputEl = document.getElementById("main_input") as HTMLInputElement;

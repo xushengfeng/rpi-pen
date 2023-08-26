@@ -34,9 +34,12 @@ body > #index > div > .icon {
     width: 100vw;
     position: absolute;
     top: 0;
+    display: flex;
+    transition: 0.4s;
 }
 
 .main > div {
+    min-width: 100vw;
     background-color: var(--bg);
 }
 
