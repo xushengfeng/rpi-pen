@@ -4,6 +4,7 @@ const { exec } = require("child_process") as typeof import("child_process");
 
 var Store = require("electron-store");
 var store = new Store();
+var historyStore = new Store({ name: "history" });
 
 const Mdict = require("js-mdict").default as typeof import("js-mdict").Mdict;
 
@@ -48,7 +49,7 @@ function analyzeInput(text: string): {
 }
 function runInput(text: string) {
     let x = analyzeInput(text);
-    page.push({ content: x.context, type: x.type });
+    pushToPage(x.context, x.type);
     console.log(page);
     renderPage(page);
 
@@ -60,7 +61,7 @@ function runInput(text: string) {
         ai();
     }
     if (x.type === "search") {
-        page.push({ content: x.context, type: x.type, isOutput: true });
+        pushToPage(x.context, x.type, true);
         renderPage(page);
     }
     if (x.type === "js") {
@@ -72,20 +73,32 @@ function runInput(text: string) {
         exec(`${x.context}`, (err, std, stde) => {
             if (!err) {
                 if (std) {
-                    page.push({ content: std, type: "shell", isOutput: true });
+                    pushToPage(std, "shell", true);
                 }
                 if (stde) {
-                    page.push({ content: stde, type: "shell", isOutput: true });
+                    pushToPage(stde, "shell", true);
                 }
             }
         });
     }
 }
 
+let pageName = crypto.randomUUID();
+
 let page: { type: input; isOutput?: boolean; content: string }[] = [];
+
+function pushToPage(content: string, type: input, isOutput?: boolean) {
+    page.push({ type, content });
+    if (isOutput) page.at(-1)["isOutput"] = true;
+    historyStore.set(`${pageName}.page`, page);
+    if (!historyStore.get(`${pageName}.name`)) {
+        historyStore.set(`${pageName}.name`, page.at(0)?.content || "name");
+    }
+}
 
 function newPage() {
     page = [];
+    pageName = crypto.randomUUID();
     aiMessages = [];
     chatEl.innerHTML = "";
 }
@@ -163,7 +176,7 @@ function ai() {
             .then((t) => {
                 let answer = t.choices[0].message.content;
                 console.log(answer);
-                page.push({ content: answer, type: "gpt", isOutput: true });
+                pushToPage(answer, "gpt", true);
                 aiMessages.push(page.length - 1);
                 re(answer);
                 renderPage(page);
@@ -203,7 +216,7 @@ function searchDic(text: string) {
         div.querySelectorAll("a").forEach((el) => {
             if (el.href.includes("entry://")) {
                 el.addEventListener("click", () => {
-                    page.push({ content: el.href.replace("entry://", ""), type: "search" });
+                    pushToPage(el.href.replace("entry://", ""), "search");
                     renderPage(page);
                 });
             } else {
