@@ -29,6 +29,26 @@ function switchToItem(name: string) {
     (document.querySelector(".main") as HTMLElement).style.transform = `translateX(${i * -100}vw)`;
 }
 /************************************main */
+var hljs = require("highlight.js");
+import { createMathjaxInstance, mathjax } from "@mdit/plugin-mathjax";
+const mathjaxInstance = createMathjaxInstance({ a11y: false });
+import MarkdownIt from "markdown-it";
+var md = MarkdownIt({
+    html: true,
+    highlight: function (str, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+            try {
+                return (
+                    '<pre class="hljs"><code>' +
+                    hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+                    "</code></pre>"
+                );
+            } catch (__) {}
+        }
+
+        return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + "</code></pre>";
+    },
+}).use(mathjax, mathjaxInstance);
 
 const inputEl = document.getElementById("main_input") as HTMLInputElement;
 const chatEl = document.getElementById("chat");
@@ -39,7 +59,7 @@ runEl.onclick = () => {
     runInput(inputEl.value);
     inputEl.value = "";
 };
-type input = "e" | "search" | "gpt" | "js" | "py" | "julia" | "shell" | "output";
+type input = "e" | "search" | "gpt" | "js" | "py" | "julia" | "shell";
 
 function analyzeInput(text: string): {
     type: input;
@@ -128,7 +148,11 @@ function renderPage(p: typeof page) {
                 if (p[i].type === "search" && p[i].isOutput) {
                     div.append(searchDic(p[i].content));
                 } else {
-                    div.innerHTML = p[i].content;
+                    if (p[i].type === "gpt") {
+                        div.innerHTML = md.render(p[i].content);
+                    } else {
+                        div.innerText = p[i].content;
+                    }
                 }
                 div.classList.add(p[i].isOutput ? "output" : "input");
                 div.setAttribute("data-id", i);

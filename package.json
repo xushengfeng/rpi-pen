@@ -17,18 +17,22 @@
     "homepage": "https://github.com/xushengfeng/eSearch/",
     "license": "GPL-3.0",
     "dependencies": {
+        "@mdit/plugin-mathjax": "^0.4.8",
         "color": "^4.2.3",
         "download": "^8.0.0",
         "electron-store": "^8.1.0",
         "esearch-ocr": "^4.1.0",
         "hex-to-css-filter": "^5.4.0",
+        "highlight.js": "^11.8.0",
         "js-mdict": "^5.0.2",
+        "markdown-it": "^13.0.1",
         "onnxruntime-node": "^1.13.1",
         "opencv.js": "^1.2.1"
     },
     "devDependencies": {
         "@electron-toolkit/tsconfig": "^1.0.1",
         "@types/color": "^3.0.3",
+        "@types/markdown-it": "^13.0.1",
         "@types/node": "^18.8.4",
         "electron": "^22.3.6",
         "electron-builder": "^24.4.0",
