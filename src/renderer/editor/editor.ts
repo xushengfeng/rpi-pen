@@ -218,7 +218,7 @@ function ai() {
             method: "POST",
             headers: { Authorization: `Bearer ${store.get("ai.keys")[0]}`, "content-type": "application/json" },
             body: JSON.stringify({
-                model: "gpt-3.5-turbo",
+                model: store.get("ai.model") || "gpt-3.5-turbo",
                 temperature: 0,
                 top_p: 1,
                 frequency_penalty: 1,
@@ -390,6 +390,30 @@ for (let i in keys) {
     el.append(ip);
     aiKeysEl.append(el);
 }
+
+document.querySelectorAll("[data-path]").forEach((el: HTMLElement) => {
+    const path = el.getAttribute("data-path");
+    let value = store.get(path);
+    if (el.tagName === "INPUT") {
+        let iel = el as HTMLInputElement;
+        if (iel.type === "checkbox") {
+            iel.checked = value;
+            iel.addEventListener("input", () => {
+                store.set(path, iel.checked);
+            });
+        } else {
+            iel.value = value;
+            iel.addEventListener("input", () => {
+                store.set(path, iel.value);
+            });
+        }
+    } else if (el.tagName === "SELECT") {
+        (el as HTMLSelectElement).value = value;
+        el.onchange = () => {
+            store.set(path, (el as HTMLSelectElement).value);
+        };
+    }
+});
 
 /************************************引入 */
 const fs = require("fs") as typeof import("fs");

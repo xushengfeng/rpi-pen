@@ -83,6 +83,9 @@ body > #index > div > .icon {
 #history {
     overflow: scroll;
 }
+#setting {
+    overflow: scroll;
+}
 
 button {
     border-radius: 0;

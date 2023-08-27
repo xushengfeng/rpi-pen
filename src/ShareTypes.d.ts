@@ -18,6 +18,7 @@ export interface setting {
     };
     ai: {
         keys: string[];
+        model: string;
     };
     dics: { name: string; path: { mdd: string; mdx: string } }[];
     OCR: {

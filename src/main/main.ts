@@ -178,7 +178,7 @@ var defaultSetting: setting = {
         记住: false,
         大小: 16,
     },
-    ai: { keys: [] },
+    ai: { keys: [], model: "gpt-3.5-turbo" },
     dics: [],
     OCR: {
         类型: "默认",
