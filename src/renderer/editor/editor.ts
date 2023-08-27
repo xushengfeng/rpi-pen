@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 
 const { exec } = require("child_process") as typeof import("child_process");
+const { clipboard } = require("electron") as typeof import("electron");
 
 var Store = require("electron-store");
 var store = new Store();
@@ -180,22 +181,27 @@ document.addEventListener("selectionchange", () => {
     if (selection && !selection.isCollapsed) {
         const range = selection.getRangeAt(0).getBoundingClientRect();
 
-        const button = document.createElement("button");
-        button.textContent = "搜索";
+        const addSearch = document.createElement("button");
+        addSearch.textContent = "搜索";
+        const copy = document.createElement("button");
+        copy.textContent = "复制";
 
-        const buttonTop = range.top - button.offsetHeight - 5;
+        const buttonTop = range.top - buttonContainer.offsetHeight - 5;
         const buttonLeft = range.right;
 
-        button.style.position = "fixed";
-        button.style.top = buttonTop + "px";
-        button.style.left = buttonLeft + 4 + "px";
+        buttonContainer.style.position = "fixed";
+        buttonContainer.style.top = buttonTop + "px";
+        buttonContainer.style.left = buttonLeft + 4 + "px";
 
         buttonContainer.innerHTML = "";
-        buttonContainer.appendChild(button);
+        buttonContainer.append(addSearch, copy);
 
-        button.onclick = () => {
+        addSearch.onclick = () => {
             inputEl.value = selection.toString();
             buttonContainer.innerHTML = "";
+        };
+        copy.onclick = () => {
+            clipboard.writeText(selection.toString());
         };
     } else {
         buttonContainer.innerHTML = "";
