@@ -335,6 +335,25 @@ historyEl.onscroll = () => {
     renderHistoryL();
 };
 
+/************************************设置 */
+const aiKeysEl = document.getElementById("ai_keys");
+let keys = store.get("ai.keys") as string[];
+for (let i in keys) {
+    let el = document.createElement("div");
+    let ip = document.createElement("input");
+    let rm = document.createElement("button");
+    rm.onclick = () => {
+        keys.splice(Number(i), 1);
+        store.set("ai.keys", keys);
+    };
+    ip.value = keys[i];
+    ip.onchange = () => {
+        store.set(`ai.keys.${i}`, ip.value);
+    };
+    el.append(ip);
+    aiKeysEl.append(el);
+}
+
 /************************************引入 */
 const fs = require("fs") as typeof import("fs");
 
