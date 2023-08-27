@@ -31,7 +31,7 @@ function switchToItem(name: string) {
 }
 /************************************main */
 var hljs = require("highlight.js");
-import { createMathjaxInstance, mathjax } from "@mdit/plugin-mathjax";
+const { createMathjaxInstance, mathjax } = require("@mdit/plugin-mathjax") as typeof import("@mdit/plugin-mathjax");
 const mathjaxInstance = createMathjaxInstance({ a11y: false });
 import MarkdownIt from "markdown-it";
 var md = MarkdownIt({
