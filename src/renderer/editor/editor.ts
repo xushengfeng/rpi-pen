@@ -87,7 +87,6 @@ function runInput(text: string) {
     let x = analyzeInput(text);
     pushToPage(x.context, x.type);
     console.log(page);
-    renderPage(page);
 
     if (x.type === "e") {
         newPage();
@@ -117,6 +116,8 @@ function runInput(text: string) {
             }
         });
     }
+
+    renderPage(page);
 }
 
 let pageName = crypto.randomUUID();
