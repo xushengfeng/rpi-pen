@@ -219,7 +219,7 @@ function ai() {
             headers: { Authorization: `Bearer ${store.get("ai.keys")[0]}`, "content-type": "application/json" },
             body: JSON.stringify({
                 model: store.get("ai.model") || "gpt-3.5-turbo",
-                temperature: 0,
+                temperature: 0.5,
                 top_p: 1,
                 frequency_penalty: 1,
                 presence_penalty: 1,
