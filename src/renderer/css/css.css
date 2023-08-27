@@ -61,6 +61,12 @@ body > #index > div > .icon {
     font-size: 12px;
     padding: 0.2rem;
     border-radius: 0.2rem;
+    position: relative;
+}
+#chat > div > :nth-child(1) {
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 #chat > .output {
     background-color: #efefef;

@@ -93,7 +93,7 @@ function runInput(text: string) {
         newPage();
     }
     if (x.type === "gpt") {
-        aiMessages.push(page.length - 1);
+        page.at(-1)["addAi"] = true;
         ai();
     }
     if (x.type === "search") {
@@ -121,11 +121,12 @@ function runInput(text: string) {
 
 let pageName = crypto.randomUUID();
 
-let page: { type: input; isOutput?: boolean; content: string }[] = [];
+let page: { type: input; isOutput?: boolean; content: string; addAi?: boolean }[] = [];
 
-function pushToPage(content: string, type: input, isOutput?: boolean) {
+function pushToPage(content: string, type: input, isOutput?: boolean, addAi?: boolean) {
     page.push({ type, content });
     if (isOutput) page.at(-1)["isOutput"] = true;
+    if (addAi) page.at(-1)["addAi"] = true;
     historyStore.set(`${pageName}.page`, page);
     if (!historyStore.get(`${pageName}.name`)) {
         historyStore.set(`${pageName}.name`, page.at(0)?.content || "name");
@@ -136,7 +137,6 @@ function pushToPage(content: string, type: input, isOutput?: boolean) {
 function newPage() {
     page = [];
     pageName = crypto.randomUUID();
-    aiMessages = [];
     chatEl.innerHTML = "";
 }
 
@@ -144,6 +144,7 @@ function renderPage(p: typeof page) {
     for (let i in p) {
         if (p[i]) {
             if (!chatEl.querySelector(`[data-id="${i}"]`)) {
+                let main = document.createElement("div");
                 let div = document.createElement("div");
                 if (p[i].type === "search" && p[i].isOutput) {
                     div.append(searchDic(p[i].content));
@@ -154,9 +155,19 @@ function renderPage(p: typeof page) {
                         div.innerText = p[i].content;
                     }
                 }
-                div.classList.add(p[i].isOutput ? "output" : "input");
-                div.setAttribute("data-id", i);
-                chatEl.append(div);
+                let bar = document.createElement("div");
+                let addAi = document.createElement("input");
+                addAi.type = "checkbox";
+                addAi.checked = p[i].addAi;
+                addAi.onclick = () => {
+                    p[i]["addAi"] = addAi.checked;
+                    historyStore.set(`${pageName}.page`, page);
+                };
+                bar.append(addAi);
+                main.append(bar, div);
+                main.classList.add(p[i].isOutput ? "output" : "input");
+                main.setAttribute("data-id", i);
+                chatEl.append(main);
             }
         }
     }
@@ -190,11 +201,12 @@ document.addEventListener("selectionchange", () => {
     }
 });
 
-let aiMessages: number[] = [];
-function formalAiMess(m: typeof aiMessages, p: typeof page) {
+function formalAiMess(p: typeof page) {
     let l: { role: "system" | "user" | "assistant"; content: string }[] = [];
-    for (let i of m) {
-        l.push({ content: p[i].content, role: p[i].isOutput ? "assistant" : "user" });
+    for (let i of p) {
+        if (i.addAi) {
+            l.push({ content: i.content, role: i.isOutput ? "assistant" : "user" });
+        }
     }
     return l;
 }
@@ -210,15 +222,14 @@ function ai() {
                 top_p: 1,
                 frequency_penalty: 1,
                 presence_penalty: 1,
-                messages: formalAiMess(aiMessages, page),
+                messages: formalAiMess(page),
             }),
         })
             .then((v) => v.json())
             .then((t) => {
                 let answer = t.choices[0].message.content;
                 console.log(answer);
-                pushToPage(answer, "gpt", true);
-                aiMessages.push(page.length - 1);
+                pushToPage(answer, "gpt", true, true);
                 re(answer);
                 renderPage(page);
             });
