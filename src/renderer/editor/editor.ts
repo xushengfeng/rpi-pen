@@ -197,7 +197,9 @@ document.addEventListener("selectionchange", () => {
         buttonContainer.append(addSearch, copy);
 
         addSearch.onclick = () => {
-            inputEl.value = selection.toString();
+            let str = inputEl.value;
+            inputEl.value =
+                str.slice(0, inputEl.selectionStart) + selection.toString() + str.slice(inputEl.selectionEnd);
             buttonContainer.innerHTML = "";
         };
         copy.onclick = () => {
