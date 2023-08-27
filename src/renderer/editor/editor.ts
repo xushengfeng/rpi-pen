@@ -337,6 +337,7 @@ function initHistory() {
         div.onclick = () => {
             page = historyStore.get(i).page;
             pageName = i as `${string}-${string}-${string}-${string}-${string}`;
+            chatEl.innerHTML = "";
             renderPage(page);
             switchToItem("main");
         };
