@@ -172,6 +172,13 @@ code.hljs {
 #history {
     overflow: scroll;
 }
+#history > div {
+    position: relative;
+}
+#history > div > div {
+    position: absolute;
+    height: 24px;
+}
 #setting {
     overflow: scroll;
 }

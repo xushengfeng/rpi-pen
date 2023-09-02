@@ -333,7 +333,7 @@ function searchDic(text: string) {
 
 /************************************历史 */
 const historyEl = document.getElementById("history");
-const historyIHeight = 16;
+const historyIHeight = 24;
 let historyDivs: HTMLElement[] = [];
 
 function initHistory() {
@@ -344,11 +344,12 @@ function initHistory() {
     historyEl.append(hisHightEl);
     let hisStore = Object.entries(historyStore.store);
     hisStore.sort((a, b) => b[1]["createTime"] - a[1]["createTime"]);
+    let n = 0;
     for (let x of hisStore) {
         let i = x[0];
         console.log(i);
-        let n = 0;
         let div = document.createElement("div");
+        div.style.top = n * historyIHeight + "px";
         div.setAttribute("data-i", String(n));
         div.innerText = historyStore.get(i).name;
         div.onclick = () => {
