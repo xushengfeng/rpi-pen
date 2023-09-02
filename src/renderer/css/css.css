@@ -46,7 +46,7 @@ body > #index > div > .icon {
 
 #chat {
     overflow: auto;
-    height: 90vh;
+    height: calc(90vh - 16px);
     padding-top: 16px;
 }
 #chat ~ * {
