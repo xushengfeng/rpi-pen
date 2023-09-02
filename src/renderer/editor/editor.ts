@@ -9,6 +9,9 @@ var Store = require("electron-store");
 var store = new Store();
 var historyStore = new Store({ name: "history" });
 
+const fs = require("fs") as typeof import("fs");
+const path = require("path") as typeof import("path");
+
 const Mdict = require("js-mdict").default as typeof import("js-mdict").Mdict;
 
 const wifi = require("node-wifi") as typeof import("node-wifi");
@@ -343,6 +346,45 @@ import * as fsrsjs from "fsrs.js";
 let cards: { [id: string]: { card: fsrsjs.Card } } = {};
 let cardDetail: { [id: string]: { context: string; sources: string[] } } = {};
 
+getReviewStore();
+function getReviewStore() {
+    fs.readFile(path.join(store.path.replace("config.json", ""), "card.json"), "utf-8", (_e, d) => {
+        if (d) {
+            let json = JSON.parse(d);
+            for (let i in json.cards) {
+                cards[i] = { card: new fsrsjs.Card() };
+                for (let x in json.cards[i].card) {
+                    if (x === "last_review" || x === "due") {
+                        cards[i].card[x] = new Date(json.cards[i].card[x]);
+                    } else {
+                        cards[i].card[x] = json.cards[i].card[x];
+                    }
+                }
+            }
+            cardDetail = json.cardDetail;
+            console.log(cards, cardDetail);
+        }
+    });
+}
+function storeReviewStore() {
+    let card: { cards: { [id: string]: { card: Object } }; cardDetail: typeof cardDetail } = {
+        cards: {},
+        cardDetail: {},
+    };
+    for (let i in cards) {
+        card.cards[i] = { card: {} };
+        for (let x in cards[i].card) {
+            if (x !== "get_retrievability") {
+                card.cards[i].card[x] = cards[i].card[x];
+            }
+        }
+    }
+    card.cardDetail = cardDetail;
+    let text = JSON.stringify(card);
+    fs.writeFile(path.join(store.path.replace("config.json", ""), "card.json"), text, (_e) => {});
+}
+setInterval(storeReviewStore, 60 * 1000);
+
 let fsrs = new fsrsjs.FSRS();
 
 /** 查词 */
@@ -565,8 +607,6 @@ document.querySelectorAll("[data-path]").forEach((el: HTMLElement) => {
 });
 
 /************************************引入 */
-const fs = require("fs") as typeof import("fs");
-
 var 模糊 = store.get("全局.模糊");
 if (模糊 != 0) {
     document.documentElement.style.setProperty("--blur", `blur(${模糊}px)`);
@@ -583,8 +623,6 @@ document.documentElement.style.setProperty("--monospace", 字体.等宽字体);
 document.documentElement.style.setProperty("--icon-color", store.get("全局.图标颜色")[1]);
 if (store.get("全局.图标颜色")[3])
     document.documentElement.style.setProperty("--icon-color1", store.get("全局.图标颜色")[3]);
-
-const path = require("path") as typeof import("path");
 
 /************************************OCR */
 
