@@ -278,7 +278,10 @@ function searchDic(text: string) {
         const dict = dicList[i.name].mdx;
         const dict1 = dicList[i.name].mdd;
         let div = document.createElement("div");
-        div.innerHTML = dict.lookup(text).definition;
+        console.log(dict.lookup(text));
+        let def = dict.lookup(text).definition;
+        if (!def) continue;
+        div.innerHTML = def;
         div.querySelectorAll("a").forEach((el) => {
             if (el.href.includes("entry://")) {
                 el.addEventListener("click", () => {
