@@ -22,6 +22,7 @@
         "download": "^8.0.0",
         "electron-store": "^8.1.0",
         "esearch-ocr": "^4.1.0",
+        "fsrs.js": "^1.1.0",
         "hex-to-css-filter": "^5.4.0",
         "highlight.js": "^11.8.0",
         "js-mdict": "^5.0.2",

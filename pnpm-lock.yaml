@@ -20,6 +20,9 @@ dependencies:
   esearch-ocr:
     specifier: ^4.1.0
     version: 4.1.0(opencv.js@1.2.1)
+  fsrs.js:
+    specifier: ^1.1.0
+    version: 1.1.0
   hex-to-css-filter:
     specifier: ^5.4.0
     version: 5.4.0
@@ -1860,6 +1863,12 @@ packages:
     engines: {node: '>=4.0.0'}
     dev: false
 
+  /deepcopy@2.1.0:
+    resolution: {integrity: sha512-8cZeTb1ZKC3bdSCP6XOM1IsTczIO73fdqtwa2B0N15eAz7gmyhQo+mc5gnFuulsgN3vIQYmTgbmQVKalH1dKvQ==}
+    dependencies:
+      type-detect: 4.0.8
+    dev: false
+
   /defaults@1.0.4:
     resolution: {integrity: sha512-eFuaLoy/Rxalv2kr+lqMlUnrDWV+3j4pljOIJgLIhI058IQfWJ7vXhyEIHu+HtC738klGALYxOKDO0bQP3tg8A==}
     dependencies:
@@ -2423,6 +2432,13 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /fsrs.js@1.1.0:
+    resolution: {integrity: sha512-DEihBx081nENpNjrSvCopPVi9Ilh+u+ELYOKQmshfSz+DgC/B0hxFFMQnqy2ibWAm9zjyR/bWvaz86xEA4MIcA==}
+    engines: {node: '>=10'}
+    dependencies:
+      deepcopy: 2.1.0
+    dev: false
 
   /function-bind@1.1.1:
     resolution: {integrity: sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A==}
@@ -4142,6 +4158,11 @@ packages:
 
   /tslib@2.4.0:
     resolution: {integrity: sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==}
+    dev: false
+
+  /type-detect@4.0.8:
+    resolution: {integrity: sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==}
+    engines: {node: '>=4'}
     dev: false
 
   /type-fest@0.13.1:

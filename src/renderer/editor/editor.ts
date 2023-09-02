@@ -281,6 +281,9 @@ function searchDic(text: string) {
         console.log(dict.lookup(text));
         let def = dict.lookup(text).definition;
         if (!def) continue;
+
+        addReviewCard(text);
+
         div.innerHTML = def;
         div.querySelectorAll("a").forEach((el) => {
             if (el.href.includes("entry://")) {
@@ -332,6 +335,87 @@ function searchDic(text: string) {
     }
 
     return mainDiv;
+}
+
+/************************************记忆 */
+import * as fsrsjs from "fsrs.js";
+
+let cards: { [id: string]: { card: fsrsjs.Card } } = {};
+let cardDetail: { [id: string]: { context: string; sources: string[] } } = {};
+
+let fsrs = new fsrsjs.FSRS();
+
+/** 查词 */
+function addReviewCard(text: string) {
+    let source = pageName;
+    text = text.trim();
+    for (let i in cardDetail) {
+        // 记过了
+        if (cardDetail[i].context === text) {
+            let now = new Date();
+            let sCards = fsrs.repeat(cards[i].card, now);
+            // 记过还查，那是忘了
+            cards[i].card = sCards[fsrsjs.Rating.Hard].card;
+            if (!cardDetail[i].sources.includes(source)) cardDetail[i].sources.push(source);
+            return;
+        }
+    }
+    let card = new fsrsjs.Card();
+    let id = crypto.randomUUID();
+    cards[id] = { card: card };
+    cardDetail[id] = { context: text, sources: [source] };
+}
+
+function getReviewDue() {
+    let now = new Date().getTime();
+    let list: { id: string; card: fsrsjs.Card }[] = [];
+    for (let i in cards) {
+        if (cards[i].card.due.getTime() < now) {
+            list.push({ id: i, card: cards[i].card });
+        }
+    }
+    list.sort((a, b) => a.card.due.getTime() - b.card.due.getTime());
+    return list;
+}
+
+const reviewBEl = document.getElementById("reflash_review_l");
+const reviewL = document.getElementById("review_l");
+
+reviewBEl.onclick = () => {
+    renderReviewList();
+};
+
+function renderReviewList() {
+    reviewL.innerHTML = "";
+    let l = getReviewDue();
+    for (let i of l) {
+        let div = document.createElement("div");
+        let text = document.createElement("span");
+        text.innerText = cardDetail[i.id].context;
+        let b = (rating: fsrsjs.Rating, text: string) => {
+            let button = document.createElement("button");
+            button.innerText = text;
+            button.onclick = () => {
+                setReviewCard(i.id, rating);
+                button.remove();
+            };
+            return button;
+        };
+        let againB = b(1, "x");
+        let hardB = b(2, "o");
+        let goodB = b(3, "v");
+        let esayB = b(4, "vv");
+        let buttons = document.createElement("div");
+        buttons.append(againB, hardB, goodB, esayB);
+        div.append(text, buttons);
+        reviewL.append(div);
+    }
+}
+
+function setReviewCard(id: string, rating: fsrsjs.Rating) {
+    let now = new Date();
+    let sCards = fsrs.repeat(cards[id].card, now);
+    cards[id].card = sCards[rating].card;
 }
 
 /************************************历史 */
