@@ -439,7 +439,7 @@ function renderReviewList() {
             button.innerText = text;
             button.onclick = () => {
                 setReviewCard(i.id, rating);
-                button.remove();
+                div.remove();
             };
             return button;
         };
