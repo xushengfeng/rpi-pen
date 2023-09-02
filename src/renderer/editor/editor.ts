@@ -136,6 +136,7 @@ function pushToPage(content: string, type: input, isOutput?: boolean, addAi?: bo
     historyStore.set(`${pageName}.page`, page);
     if (!historyStore.get(`${pageName}.name`)) {
         historyStore.set(`${pageName}.name`, page.at(0)?.content || "name");
+        historyStore.set(`${pageName}.createTime`, new Date().getTime());
         initHistory();
     }
 }
@@ -341,7 +342,10 @@ function initHistory() {
     hisHightEl.style.height = Object.keys(historyStore.store).length * historyIHeight + "px";
     historyEl.innerHTML = "";
     historyEl.append(hisHightEl);
-    for (let i in historyStore.store) {
+    let hisStore = Object.entries(historyStore.store);
+    hisStore.sort((a, b) => b[1]["createTime"] - a[1]["createTime"]);
+    for (let x of hisStore) {
+        let i = x[0];
         console.log(i);
         let n = 0;
         let div = document.createElement("div");
