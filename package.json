@@ -26,6 +26,7 @@
         "highlight.js": "^11.8.0",
         "js-mdict": "^5.0.2",
         "markdown-it": "^13.0.1",
+        "node-wifi": "^2.0.16",
         "onnxruntime-node": "^1.13.1",
         "opencv.js": "^1.2.1"
     },
@@ -34,6 +35,7 @@
         "@types/color": "^3.0.3",
         "@types/markdown-it": "^13.0.1",
         "@types/node": "^18.8.4",
+        "@types/node-wifi": "^2.0.0",
         "electron": "^22.3.6",
         "electron-builder": "^24.4.0",
         "electron-vite": "^1.0.24",

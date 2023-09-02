@@ -37,6 +37,7 @@ export interface setting {
         h: number;
     };
     代理: Electron.Config;
+    WIFI: { ssid: string; passwd: string }[];
     硬件加速: boolean;
     更新: {
         检查更新: boolean;

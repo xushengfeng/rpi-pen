@@ -1,5 +1,7 @@
 /// <reference types="vite/client" />
 
+import { setting } from "../../ShareTypes";
+
 const { exec } = require("child_process") as typeof import("child_process");
 const { clipboard } = require("electron") as typeof import("electron");
 
@@ -8,6 +10,8 @@ var store = new Store();
 var historyStore = new Store({ name: "history" });
 
 const Mdict = require("js-mdict").default as typeof import("js-mdict").Mdict;
+
+const wifi = require("node-wifi") as typeof import("node-wifi");
 
 /************************************UI */
 const indexEl = document.getElementById("index");
@@ -381,6 +385,51 @@ historyEl.onscroll = () => {
 };
 
 /************************************设置 */
+const wifiScanButton = document.getElementById("scan_wifi");
+const wifiConnectList = document.getElementById("wifi_c_list");
+const wifiList = document.getElementById("wifi_list");
+wifiScanButton.onclick = () => {
+    wifiList.innerHTML = "";
+
+    wifi.scan((error, networks) => {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log(networks);
+            for (let i of networks) {
+                if (i.ssid) {
+                    let div = document.createElement("div");
+                    let ssid = document.createElement("span");
+                    let details = document.createElement("span");
+                    ssid.innerText = i.ssid;
+                    details.innerText = i.quality + "%";
+                    div.append(ssid, details);
+                    div.onclick = (e) => {
+                        if ((e.target as HTMLElement).tagName === "INPUT") return;
+                        if (i.security) {
+                            let input = document.createElement("input");
+                            input.onchange = () => {
+                                c(input.value);
+                            };
+                            div.append(input);
+                        } else {
+                            c("");
+                        }
+                    };
+                    let c = (passwd: string) => {
+                        wifi.connect({ ssid: i.ssid, password: passwd }).then(() => {
+                            let wifil = store.get("WIFI") as setting["WIFI"];
+                            wifil.unshift({ ssid: i.ssid, passwd: passwd });
+                            store.set("WIFI", wifil);
+                        });
+                    };
+                    wifiList.append(div);
+                }
+            }
+        }
+    });
+};
+
 const aiKeysEl = document.getElementById("ai_keys");
 let keys = store.get("ai.keys") as string[];
 for (let i in keys) {
@@ -517,4 +566,31 @@ async function localOcr(
     } catch (error) {
         callback(error, null);
     }
+}
+
+/************************************启动 */
+
+// 初始化wifi模块
+wifi.init({
+    iface: null,
+});
+if (store.get("WIFI.0")) {
+    let wifiList = store.get("WIFI") as setting["WIFI"];
+    wifi.scan().then((networks) => {
+        for (let i of networks) {
+            for (let x of wifiList) {
+                if (x.ssid === i.ssid) {
+                    wifi.connect({ ssid: x.ssid, password: x.passwd }).then(() => {
+                        let div = document.createElement("div");
+                        let ssid = document.createElement("span");
+                        ssid.innerText = x.ssid;
+                        div.append(ssid);
+                        wifiConnectList.innerHTML = "";
+                        wifiConnectList.append(div);
+                    });
+                    break;
+                }
+            }
+        }
+    });
 }

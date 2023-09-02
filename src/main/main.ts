@@ -201,6 +201,7 @@ var defaultSetting: setting = {
         proxyRules: "",
         proxyBypassRules: "",
     },
+    WIFI: [],
     硬件加速: true,
     更新: {
         检查更新: true,
