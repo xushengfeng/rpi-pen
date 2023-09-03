@@ -292,7 +292,7 @@ function getDicSorce(src: string) {}
 function initDic() {
     for (let i of dicPath) {
         dicList[i.name] = {
-            mdd: new Mdict(i.path.mdd),
+            mdd: i.path.mdd ? new Mdict(i.path.mdd) : null,
             mdx: new Mdict(i.path.mdx),
         };
     }
@@ -321,36 +321,38 @@ function searchDic(text: string) {
             }
             el.removeAttribute("href");
         });
-        div.querySelectorAll("link").forEach((el) => {
-            console.log(`\\${el.href}`);
-            let newEl = document.createElement("style");
-            let b64 = dict1.lookup(`\\${el.getAttribute("href")}`).definition;
-            let styleText = decodeURIComponent(escape(window.atob(b64)));
-            styleText = styleText.replace(/url\((.+)\)/g, (_a, $1: string) => {
-                console.log($1);
-                let src = dict1.lookup(`\\${$1.replaceAll(/['"]/g, "")}`).definition;
-                return `url("data:font/ttf;base64,${src}")`;
+        if (dict1) {
+            div.querySelectorAll("link").forEach((el) => {
+                console.log(`\\${el.href}`);
+                let newEl = document.createElement("style");
+                let b64 = dict1.lookup(`\\${el.getAttribute("href")}`).definition;
+                let styleText = decodeURIComponent(escape(window.atob(b64)));
+                styleText = styleText.replace(/url\((.+)\)/g, (_a, $1: string) => {
+                    console.log($1);
+                    let src = dict1.lookup(`\\${$1.replaceAll(/['"]/g, "")}`).definition;
+                    return `url("data:font/ttf;base64,${src}")`;
+                });
+                newEl.innerHTML = styleText;
+                el.outerHTML = newEl.outerHTML;
             });
-            newEl.innerHTML = styleText;
-            el.outerHTML = newEl.outerHTML;
-        });
-        div.querySelectorAll("img").forEach((el) => {
-            let src = el.getAttribute("src");
-            console.log(`\\${src}`);
+            div.querySelectorAll("img").forEach((el) => {
+                let src = el.getAttribute("src");
+                console.log(`\\${src}`);
 
-            let b64 = dict1.lookup(`\\${src}`).definition;
-            el.src = `data:${src.endsWith(".svg") ? MIME.svg : MIME.img};base64,${b64}`;
-        });
-        div.querySelectorAll("script").forEach((el) => {
-            let src = el.getAttribute("src");
-            console.log(`\\${src}`);
+                let b64 = dict1.lookup(`\\${src}`).definition;
+                el.src = `data:${src.endsWith(".svg") ? MIME.svg : MIME.img};base64,${b64}`;
+            });
+            div.querySelectorAll("script").forEach((el) => {
+                let src = el.getAttribute("src");
+                console.log(`\\${src}`);
 
-            let b64 = dict1.lookup(`\\${src}`).definition;
-            let newEl = document.createElement("script");
-            newEl.src = `data:${MIME.js};base64,${b64}`;
-            el.remove();
-            div.append(newEl);
-        });
+                let b64 = dict1.lookup(`\\${src}`).definition;
+                let newEl = document.createElement("script");
+                newEl.src = `data:${MIME.js};base64,${b64}`;
+                el.remove();
+                div.append(newEl);
+            });
+        }
 
         let sum = document.createElement("summary");
         sum.innerText = i.name;
