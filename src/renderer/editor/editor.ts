@@ -200,6 +200,8 @@ document.addEventListener("selectionchange", () => {
         addSearch.textContent = "搜索";
         const copy = document.createElement("button");
         copy.textContent = "复制";
+        const review = document.createElement("button");
+        review.textContent = "记忆";
 
         const buttonTop = range.top - buttonContainer.offsetHeight - 5;
         const buttonLeft = range.right;
@@ -209,7 +211,7 @@ document.addEventListener("selectionchange", () => {
         buttonContainer.style.left = buttonLeft + 4 + "px";
 
         buttonContainer.innerHTML = "";
-        buttonContainer.append(addSearch, copy);
+        buttonContainer.append(addSearch, copy, review);
 
         addSearch.onclick = () => {
             let str = inputEl.value;
@@ -219,6 +221,9 @@ document.addEventListener("selectionchange", () => {
         };
         copy.onclick = () => {
             clipboard.writeText(selection.toString());
+        };
+        review.onclick = () => {
+            addReviewCard(selection.toString());
         };
     } else {
         buttonContainer.innerHTML = "";
