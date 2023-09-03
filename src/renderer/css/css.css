@@ -53,9 +53,10 @@ body > #index > div > .icon {
     height: 10vh;
     display: flex;
 }
-#chat ~ * > input {
+#chat ~ * > textarea {
     outline: none;
     border: none;
+    flex-grow: 1;
 }
 
 #chat > div {

@@ -58,7 +58,7 @@ var md = MarkdownIt({
     },
 }).use(mathjax, mathjaxInstance);
 
-const inputEl = document.getElementById("main_input") as HTMLInputElement;
+const inputEl = document.getElementById("main_input") as HTMLTextAreaElement;
 const chatEl = document.getElementById("chat");
 const runEl = document.getElementById("run");
 const buttonContainer = document.getElementById("button-container");

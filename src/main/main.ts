@@ -137,7 +137,7 @@ const isMac = process.platform === "darwin";
 // 主页面
 async function createMainWindow(webPage: string, t?: boolean | Array<any>) {
     let mainWindow = new BrowserWindow({
-        ...(dev ? { width: 320, height: 172 } : { fullscreen: true }),
+        ...(dev ? { width: 800, height: 480 } : { fullscreen: true }),
         backgroundColor: nativeTheme.shouldUseDarkColors ? "#0f0f0f" : "#ffffff",
         icon: theIcon,
         webPreferences: {
