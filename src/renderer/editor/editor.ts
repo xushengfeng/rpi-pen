@@ -32,7 +32,7 @@ indexEl.querySelectorAll("div").forEach((el, i) => {
     };
 });
 function switchToItem(name: string) {
-    let name2i = ["main", "history", "setting"];
+    let name2i = ["main", "review", "history", "setting"];
     let i = name2i.indexOf(name);
     (document.querySelector(".main") as HTMLElement).style.transform = `translateX(${i * -100}vw)`;
 }
