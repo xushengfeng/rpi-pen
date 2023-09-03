@@ -173,6 +173,17 @@ function renderPage(p: typeof page) {
                     }
                 }
                 let bar = document.createElement("div");
+                let review = document.createElement("input");
+                review.type = "checkbox";
+                review.onclick = () => {
+                    if (review.checked) {
+                        reviewItem(div);
+                    } else {
+                        allWords = [];
+                        wordIndex = 0;
+                        unknowWords = [];
+                    }
+                };
                 let addAi = document.createElement("input");
                 addAi.type = "checkbox";
                 addAi.checked = p[i].addAi;
@@ -180,7 +191,7 @@ function renderPage(p: typeof page) {
                     p[i]["addAi"] = addAi.checked;
                     historyStore.set(`${pageName}.page`, page);
                 };
-                bar.append(addAi);
+                bar.append(review, addAi);
                 main.append(bar, div);
                 main.classList.add(p[i].isOutput ? "output" : "input");
                 main.setAttribute("data-id", i);
@@ -351,6 +362,78 @@ function searchDic(text: string) {
 
     return mainDiv;
 }
+
+var allWords: {
+    word: string;
+    parentNode: Node;
+    offset: number;
+}[] = [];
+var wordIndex = 0;
+let unknowWords: string[] = [];
+function reviewItem(div: HTMLDivElement) {
+    console.log(div.innerText);
+
+    const treeWalker = document.createTreeWalker(div, NodeFilter.SHOW_TEXT);
+    const allTextNodes: Node[] = [];
+    let currentNode = treeWalker.nextNode();
+    while (currentNode) {
+        allTextNodes.push(currentNode);
+        currentNode = treeWalker.nextNode();
+    }
+
+    allWords = [];
+    wordIndex = 0;
+    unknowWords = [];
+    for (const textNode of allTextNodes) {
+        for (const word of textNode.textContent.matchAll(/[a-zA-Z]+/g)) {
+            allWords.push({
+                word: word[0],
+                parentNode: textNode,
+                offset: word.index,
+            });
+        }
+    }
+}
+
+document.addEventListener("keydown", (e) => {
+    if ((e.target as HTMLElement).tagName === "TEXTAREA") return;
+    if (allWords.length === 0) return;
+    if (e.key === "ArrowLeft" || e.key === "ArrowUp" || e.key === "ArrowRight") {
+        let beforeWord = allWords[wordIndex].word;
+        if (!unknowWords.includes(beforeWord)) {
+            if (e.key === "ArrowUp") {
+                addReviewCard(beforeWord);
+                unknowWords.push(beforeWord);
+            } else {
+                for (let i in cardDetail) {
+                    // 记过了
+                    if (cardDetail[i].context === beforeWord) {
+                        let now = new Date();
+                        let sCards = fsrs.repeat(cards[i].card, now);
+                        cards[i].card = sCards[fsrsjs.Rating.Easy].card;
+                        let source = pageName;
+                        if (!cardDetail[i].sources.includes(source)) cardDetail[i].sources.push(source);
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (e.key === "ArrowRight") {
+            wordIndex++;
+        } else if (e.key === "ArrowLeft") {
+            wordIndex--;
+        }
+        wordIndex = Math.max(0, Math.min(allWords.length - 1, wordIndex));
+        const { word, parentNode, offset } = allWords[wordIndex];
+
+        const range = new Range();
+        range.setStart(parentNode, offset);
+        range.setEnd(parentNode, offset + word.length);
+        document.getSelection().removeAllRanges();
+        document.getSelection().addRange(range);
+    }
+});
 
 /************************************记忆 */
 import * as fsrsjs from "fsrs.js";
