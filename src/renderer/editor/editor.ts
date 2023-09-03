@@ -67,6 +67,13 @@ runEl.onclick = () => {
     runInput(inputEl.value);
     inputEl.value = "";
 };
+document.onkeydown = (e) => {
+    if (e.code === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        runEl.click();
+    }
+};
+
 type input = "e" | "search" | "gpt" | "js" | "py" | "julia" | "shell";
 
 function analyzeInput(text: string): {
