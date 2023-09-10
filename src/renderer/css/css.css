@@ -175,6 +175,11 @@ code.hljs {
     justify-content: space-between;
     align-items: center;
 }
+#review_l > div > span:nth-child(1) {
+    display: flex;
+    overflow-x: auto;
+    gap: 4px;
+}
 
 #history {
     overflow: scroll;

@@ -531,6 +531,21 @@ function renderReviewList() {
         let div = document.createElement("div");
         let text = document.createElement("span");
         text.innerText = cardDetail[i.id].context;
+        text.onclick = () => {
+            text.innerHTML = "";
+            let ids = cardDetail[i.id].sources;
+            if (ids.length === 1) {
+                jumpToHis(ids[0]);
+            } else
+                for (let i of ids.toReversed()) {
+                    let t = document.createElement("span");
+                    t.innerText = historyStore.get(i).name;
+                    t.onclick = () => {
+                        jumpToHis(i);
+                    };
+                    text.append(t);
+                }
+        };
         let b = (rating: fsrsjs.Rating, text: string) => {
             let button = document.createElement("button");
             button.innerText = text;
@@ -579,11 +594,7 @@ function initHistory() {
         div.setAttribute("data-i", String(n));
         div.innerText = historyStore.get(i).name;
         div.onclick = () => {
-            page = historyStore.get(i).page;
-            pageName = i as `${string}-${string}-${string}-${string}-${string}`;
-            chatEl.innerHTML = "";
-            renderPage(page);
-            switchToItem("main");
+            jumpToHis(i);
         };
         n++;
         historyDivs.push(div);
@@ -591,6 +602,14 @@ function initHistory() {
     renderHistoryL();
 }
 initHistory();
+
+function jumpToHis(id: string) {
+    page = historyStore.get(id).page;
+    pageName = id as `${string}-${string}-${string}-${string}-${string}`;
+    chatEl.innerHTML = "";
+    renderPage(page);
+    switchToItem("main");
+}
 
 function renderHistoryL() {
     let top = historyEl.scrollTop;
