@@ -198,6 +198,7 @@ body > #index > div > .icon {
     outline: none;
     border: none;
     flex-grow: 1;
+    font-size: var(--font-size);
 }
 
 #chat > div {
