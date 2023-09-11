@@ -862,8 +862,6 @@ if (store.get("WIFI.0")) {
 const powerCommand = spawn("sudo", ["minicom", "-D", "/dev/ttyS0"]);
 
 let minPower = Infinity;
-const maxV = 4.2;
-const minV = 3.5;
 const batteryEl = document.getElementById("battery");
 const powerInterval = setInterval(() => {
     const data = powerCommand.stdout.read(); // 读取输出
@@ -876,7 +874,7 @@ const powerInterval = setInterval(() => {
         if (!line || !line.includes(":")) return;
         let v = Number(line.split(":")[1].trim() || Infinity);
         if (v < minPower) {
-            minPower = v;
+            if (v > minPower - 5) minPower = v; // 防止误掉太快回不来
             batteryEl.innerText = Math.floor(calculateCapacity(v)) + "%";
         }
         if (v >= 5) {
