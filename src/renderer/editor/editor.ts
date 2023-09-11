@@ -17,7 +17,10 @@ const Mdict = require("js-mdict").default as typeof import("js-mdict").Mdict;
 const wifi = require("node-wifi") as typeof import("node-wifi");
 
 /************************************UI */
-document.documentElement.style.setProperty("--font-size", store.get("字体.大小"));
+function setUi() {
+    document.documentElement.style.setProperty("--font-size", store.get("字体.大小") + "px");
+}
+setUi();
 
 const indexEl = document.getElementById("index");
 indexEl.classList.add("hiden");
@@ -150,7 +153,7 @@ function pushToPage(content: string, type: input, isOutput?: boolean, addAi?: bo
     historyStore.set(`${pageName}.page`, page);
     if (!historyStore.get(`${pageName}.name`)) {
         historyStore.set(`${pageName}.name`, page.at(0)?.content || "name");
-        historyStore.set(`${pageName}.createTime`, new Date().getTime());
+        historyStore.set(`${pageName}.createTime`, getNow().getTime());
         initHistory();
     }
 }
@@ -412,7 +415,7 @@ document.addEventListener("keydown", (e) => {
                 for (let i in cardDetail) {
                     // 记过了
                     if (cardDetail[i].context === beforeWord) {
-                        let now = new Date();
+                        let now = getNow();
                         let sCards = fsrs.repeat(cards[i].card, now);
                         cards[i].card = sCards[fsrsjs.Rating.Easy].card;
                         let source = pageName;
@@ -493,7 +496,7 @@ function addReviewCard(text: string) {
     for (let i in cardDetail) {
         // 记过了
         if (cardDetail[i].context === text) {
-            let now = new Date();
+            let now = getNow();
             let sCards = fsrs.repeat(cards[i].card, now);
             // 记过还查，那是忘了
             cards[i].card = sCards[fsrsjs.Rating.Hard].card;
@@ -508,7 +511,7 @@ function addReviewCard(text: string) {
 }
 
 function getReviewDue() {
-    let now = new Date().getTime();
+    let now = getNow().getTime();
     let list: { id: string; card: fsrsjs.Card }[] = [];
     for (let i in cards) {
         if (cards[i].card.due.getTime() < now) {
@@ -569,7 +572,7 @@ function renderReviewList() {
 }
 
 function setReviewCard(id: string, rating: fsrsjs.Rating) {
-    let now = new Date();
+    let now = getNow();
     let sCards = fsrs.repeat(cards[id].card, now);
     cards[id].card = sCards[rating].card;
 }
@@ -709,25 +712,40 @@ document.querySelectorAll("[data-path]").forEach((el: HTMLElement) => {
             iel.checked = value;
             iel.addEventListener("input", () => {
                 store.set(path, iel.checked);
+                setUi();
             });
         } else if (iel.type === "range") {
             iel.value = value;
             iel.addEventListener("input", () => {
                 store.set(path, Number(iel.value));
+                setUi();
             });
         } else {
             iel.value = value;
             iel.addEventListener("input", () => {
                 store.set(path, iel.value);
+                setUi();
             });
         }
     } else if (el.tagName === "SELECT") {
         (el as HTMLSelectElement).value = value;
         el.onchange = () => {
             store.set(path, (el as HTMLSelectElement).value);
+            setUi();
         };
     }
 });
+
+const timeSetEl = document.getElementById("time-set") as HTMLInputElement;
+const timeSaveEl = document.getElementById("time-save") as HTMLButtonElement;
+let dTime = 0;
+timeSetEl.value = new Date().toString();
+timeSaveEl.onclick = () => {
+    dTime = new Date(timeSetEl.value).getTime() - new Date().getTime();
+};
+function getNow() {
+    return new Date(new Date().getTime() + dTime);
+}
 
 const tempEl = document.getElementById("cpu_temp");
 document.getElementById("get_about").onclick = () => {
