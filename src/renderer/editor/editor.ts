@@ -729,6 +729,15 @@ document.querySelectorAll("[data-path]").forEach((el: HTMLElement) => {
     }
 });
 
+const tempEl = document.getElementById("cpu_temp");
+document.getElementById("get_about").onclick = () => {
+    exec("vcgencmd measure_temp", (err, sto) => {
+        if (!err) {
+            tempEl.innerText = sto.replace("temp=", "").replace("'C", "");
+        }
+    });
+};
+
 /************************************引入 */
 var 模糊 = store.get("全局.模糊");
 if (模糊 != 0) {
