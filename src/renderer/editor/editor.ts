@@ -307,7 +307,8 @@ function initDic() {
 initDic();
 function searchDic(text: string) {
     let mainDiv = document.createElement("div");
-    for (let i of dicPath) {
+    for (let ni in dicPath) {
+        const i = dicPath[ni];
         const dict = dicList[i.name].mdx;
         const dict1 = dicList[i.name].mdd;
         let div = document.createElement("div");
@@ -362,6 +363,9 @@ function searchDic(text: string) {
         let sum = document.createElement("summary");
         sum.innerText = i.name;
         let details = document.createElement("details");
+        if (ni === "0") {
+            details.open = true;
+        }
         details.append(sum);
         details.append(div);
         mainDiv.append(details);
