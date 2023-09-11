@@ -115,6 +115,8 @@ function runInput(text: string) {
     if (x.type === "search") {
         pushToPage(x.context, x.type, true);
         renderPage(page);
+
+        addReviewCard(x.context.trim());
     }
     if (x.type === "js") {
         eval(x.context);
@@ -309,8 +311,6 @@ function searchDic(text: string) {
         console.log(dict.lookup(text));
         let def = dict.lookup(text).definition;
         if (!def) continue;
-
-        addReviewCard(text);
 
         div.innerHTML = def;
         div.querySelectorAll("a").forEach((el) => {
