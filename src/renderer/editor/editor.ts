@@ -17,6 +17,8 @@ const Mdict = require("js-mdict").default as typeof import("js-mdict").Mdict;
 const wifi = require("node-wifi") as typeof import("node-wifi");
 
 /************************************UI */
+document.documentElement.style.setProperty("--font-size", store.get("字体.大小"));
+
 const indexEl = document.getElementById("index");
 indexEl.classList.add("hiden");
 indexEl.querySelectorAll("div").forEach((el, i) => {
@@ -707,6 +709,11 @@ document.querySelectorAll("[data-path]").forEach((el: HTMLElement) => {
             iel.checked = value;
             iel.addEventListener("input", () => {
                 store.set(path, iel.checked);
+            });
+        } else if (iel.type === "range") {
+            iel.value = value;
+            iel.addEventListener("input", () => {
+                store.set(path, Number(iel.value));
             });
         } else {
             iel.value = value;

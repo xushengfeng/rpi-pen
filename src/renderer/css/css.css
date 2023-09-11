@@ -1,3 +1,7 @@
+:root {
+    --font-size: 16px;
+}
+
 body::-webkit-scrollbar {
     display: none;
 }
@@ -60,7 +64,7 @@ body > #index > div > .icon {
 }
 
 #chat > div {
-    font-size: 12px;
+    font-size: var(--font-size);
     padding: 0.2rem;
     border-radius: 0.2rem;
     position: relative;
@@ -165,7 +169,7 @@ code.hljs {
 }
 
 #button-container > button {
-    font-size: 12px;
+    font-size: var(--font-size);
     border-radius: 0.2rem;
     overflow: hidden;
 }
