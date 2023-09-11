@@ -873,7 +873,8 @@ const powerInterval = setInterval(() => {
         let line = output.split("\n").findLast((t) => {
             return t.includes("Vin");
         });
-        let v = Number(line.split(":")[1].trim());
+        if (!line || !line.includes(":")) return;
+        let v = Number(line.split(":")[1].trim() || Infinity);
         if (v < minPower) {
             minPower = v;
             batteryEl.innerText = Math.floor(((v - minV) / (maxV - minV)) * 100) + "%";
