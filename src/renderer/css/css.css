@@ -311,6 +311,10 @@ code.hljs {
     overflow: hidden;
 }
 
+#review_l {
+    height: calc(100vh - 32px);
+    overflow: auto;
+}
 #review_l > div {
     display: flex;
     justify-content: space-between;
