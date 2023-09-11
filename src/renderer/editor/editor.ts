@@ -877,7 +877,7 @@ const powerInterval = setInterval(() => {
         let v = Number(line.split(":")[1].trim() || Infinity);
         if (v < minPower) {
             minPower = v;
-            batteryEl.innerText = Math.floor(((v - minV) / (maxV - minV)) * 100) + "%";
+            batteryEl.innerText = Math.floor(calculateCapacity(v)) + "%";
         }
         if (v >= 5) {
             // 充电
@@ -890,3 +890,56 @@ const powerInterval = setInterval(() => {
         clearInterval(powerInterval);
     }
 }, 1500);
+
+function calculateCapacity(voltage: number) {
+    const capacityMap = {
+        4.15: 99,
+        4.14: 97,
+        4.12: 95,
+        4.1: 92,
+        4.08: 90,
+        4.05: 87,
+        4.03: 85,
+        3.97: 80,
+        3.93: 75,
+        3.9: 70,
+        3.87: 65,
+        3.84: 60,
+        3.81: 55,
+        3.79: 50,
+        3.77: 45,
+        3.76: 42,
+        3.74: 35,
+        3.73: 30,
+        3.72: 25,
+        3.71: 20,
+        3.69: 12,
+        3.66: 10,
+        3.65: 8,
+        3.64: 5,
+        3.63: 3,
+        3.61: 1,
+    };
+
+    const voltageIntervals = Object.keys(capacityMap)
+        .map((a) => Number(a))
+        .toSorted((a, b) => a - b);
+    let capacity: number;
+
+    for (let i = 0; i < voltageIntervals.length; i++) {
+        const interval = voltageIntervals[i];
+        if (interval <= voltage && voltage <= (voltageIntervals[i + 1] || Infinity)) {
+            if (i === voltageIntervals.length - 1) {
+                capacity = 100;
+            } else {
+                let s = capacityMap[interval];
+                let e = capacityMap[voltageIntervals[i + 1]];
+                capacity = s + ((voltage - interval) / (voltageIntervals[i + 1] - interval)) * (e - s);
+            }
+            return capacity;
+        }
+    }
+    capacity = 0;
+
+    return capacity;
+}
