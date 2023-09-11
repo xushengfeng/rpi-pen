@@ -362,9 +362,9 @@ function searchDic(text: string) {
         let sum = document.createElement("summary");
         sum.innerText = i.name;
         let details = document.createElement("details");
+        details.append(sum);
         details.append(div);
-        sum.append(details);
-        mainDiv.append(sum);
+        mainDiv.append(details);
     }
 
     return mainDiv;
