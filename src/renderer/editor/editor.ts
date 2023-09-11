@@ -2,7 +2,7 @@
 
 import { setting } from "../../ShareTypes";
 
-const { exec } = require("child_process") as typeof import("child_process");
+const { exec, spawn } = require("child_process") as typeof import("child_process");
 const { clipboard } = require("electron") as typeof import("electron");
 
 var Store = require("electron-store");
@@ -856,3 +856,36 @@ if (store.get("WIFI.0")) {
         }
     });
 }
+
+/** 读取电源管理 waveshare Power Management HAT(B) */
+
+const powerCommand = spawn("sudo", ["minicom", "-D", "/dev/ttyS0"]);
+
+let minPower = Infinity;
+const maxV = 4.2;
+const minV = 3.5;
+const batteryEl = document.getElementById("battery");
+const powerInterval = setInterval(() => {
+    const data = powerCommand.stdout.read(); // 读取输出
+
+    if (data !== null) {
+        const output = data.toString("utf-8") as string;
+        let line = output.split("\n").findLast((t) => {
+            return t.includes("Vin");
+        });
+        let v = Number(line.split(":")[1].trim());
+        if (v < minPower) {
+            minPower = v;
+            batteryEl.innerText = Math.floor(((v - minV) / (maxV - minV)) * 100) + "%";
+        }
+        if (v >= 5) {
+            // 充电
+            minPower = Infinity;
+            batteryEl.innerText = "充电中";
+        }
+    }
+
+    if (powerCommand.exitCode !== null) {
+        clearInterval(powerInterval);
+    }
+}, 1500);
