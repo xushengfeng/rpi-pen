@@ -1,5 +1,6 @@
 :root {
     --font-size: 16px;
+    --main-bar-size: 24px;
 }
 
 body::-webkit-scrollbar {
@@ -22,16 +23,16 @@ body > #index {
 }
 body > #index > div {
     position: relative;
-    width: 16px;
-    height: 16px;
+    width: var(--main-bar-size);
+    height: var(--main-bar-size);
 }
 body > #index > div > .icon {
-    width: 16px;
-    height: 16px;
+    width: var(--main-bar-size);
+    height: var(--main-bar-size);
 }
 
 .hiden {
-    transform: translateX(calc(100% - 16px));
+    transform: translateX(calc(100% - var(--main-bar-size)));
 }
 
 .main {
@@ -50,8 +51,8 @@ body > #index > div > .icon {
 
 #chat {
     overflow: auto;
-    height: calc(90vh - 16px);
-    padding-top: 16px;
+    height: calc(90vh - var(--main-bar-size));
+    padding-top: var(--main-bar-size);
 }
 #chat ~ * {
     height: 10vh;
