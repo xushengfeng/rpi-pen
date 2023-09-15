@@ -105,7 +105,7 @@ function analyzeInput(text: string): {
 }
 function runInput(text: string) {
     let x = analyzeInput(text);
-    pushToPage(x.context, x.type);
+    if (x.type != "e") pushToPage(x.context, x.type);
     console.log(page);
 
     if (x.type === "e") {
