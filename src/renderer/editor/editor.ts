@@ -305,6 +305,19 @@ function initDic() {
     }
 }
 initDic();
+function lookupDic(word: string, dic: import("js-mdict").Mdict) {
+    word = word.trim();
+    let list = dic.keyList;
+    for (let i of list) {
+        if (i.keyText === word) {
+            return dic.fetch_defination(i);
+        }
+    }
+    return {
+        keyText: word,
+        definition: null,
+    };
+}
 function searchDic(text: string) {
     let mainDiv = document.createElement("div");
     for (let ni in dicPath) {
@@ -312,8 +325,8 @@ function searchDic(text: string) {
         const dict = dicList[i.name].mdx;
         const dict1 = dicList[i.name].mdd;
         let div = document.createElement("div");
-        console.log(dict.lookup(text));
-        let def = dict.lookup(text).definition;
+        console.log(lookupDic(text, dict));
+        let def = lookupDic(text, dict).definition;
         if (!def) continue;
 
         div.innerHTML = def;
