@@ -320,7 +320,9 @@ function searchDic(text: string) {
         div.querySelectorAll("a").forEach((el) => {
             if (el.href.includes("entry://")) {
                 el.addEventListener("click", () => {
-                    pushToPage(el.href.replace("entry://", ""), "search");
+                    let word = el.href.replace("entry://", "");
+                    pushToPage(word, "search");
+                    pushToPage(word, "search", true);
                     renderPage(page);
                 });
             } else {
