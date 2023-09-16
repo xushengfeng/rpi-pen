@@ -556,11 +556,11 @@ function renderReviewList() {
         let text = document.createElement("span");
         text.innerText = cardDetail[i.id].context;
         text.onclick = () => {
-            text.innerHTML = "";
             let ids = cardDetail[i.id].sources;
             if (ids.length === 1) {
                 jumpToHis(ids[0]);
-            } else
+            } else {
+                text.innerHTML = "";
                 for (let i of ids.toReversed()) {
                     let t = document.createElement("span");
                     t.innerText = historyStore.get(i).name;
@@ -569,6 +569,7 @@ function renderReviewList() {
                     };
                     text.append(t);
                 }
+            }
         };
         let b = (rating: fsrsjs.Rating, text: string) => {
             let button = document.createElement("button");
