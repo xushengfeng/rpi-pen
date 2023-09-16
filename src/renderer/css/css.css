@@ -18,6 +18,7 @@ html,
 body {
     margin: 0;
     font-family: var(--main-font);
+    font-size: var(--font-size);
     color: var(--color);
 }
 
@@ -92,7 +93,6 @@ select {
     outline: none;
     margin: 0px;
     color: var(--color);
-    font-size: var(--font-size);
     padding: 0 var(--o-padding) 0 var(--o-padding);
     transition: var(--transition);
     user-select: none;
@@ -102,7 +102,6 @@ select:hover {
     background-color: var(--hover-color);
 }
 option {
-    font-size: var(--font-size);
     background-color: var(--bg);
 }
 textarea {
@@ -202,7 +201,6 @@ body > #index > div > .icon {
 }
 
 #chat > div {
-    font-size: var(--font-size);
     padding: 0.2rem;
     border-radius: 0.2rem;
     position: relative;
@@ -307,7 +305,6 @@ code.hljs {
 }
 
 #button-container > button {
-    font-size: var(--font-size);
     border-radius: 0.2rem;
     overflow: hidden;
 }
