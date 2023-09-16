@@ -152,7 +152,7 @@ function pushToPage(content: string, type: input, isOutput?: boolean, addAi?: bo
     if (addAi) page.at(-1)["addAi"] = true;
     historyStore.set(`${pageName}.page`, page);
     if (!historyStore.get(`${pageName}.name`)) {
-        historyStore.set(`${pageName}.name`, page.at(0)?.content || "name");
+        historyStore.set(`${pageName}.name`, (page.at(0)?.content || "").trim().replaceAll("\n", " ") || "name");
         historyStore.set(`${pageName}.createTime`, getNow().getTime());
         initHistory();
     }
