@@ -157,6 +157,10 @@ async function createMainWindow(webPage: string, t?: boolean | Array<any>) {
     mainWindow.webContents.on("did-finish-load", () => {
         mainWindow.webContents.setZoomFactor(store.get("全局.缩放") || 1.0);
     });
+
+    ipcMain.on("minimize", (_e) => {
+        mainWindow.minimize();
+    });
 }
 
 // 默认设置

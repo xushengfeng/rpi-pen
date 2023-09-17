@@ -3,7 +3,7 @@
 import { setting } from "../../ShareTypes";
 
 const { exec, spawn } = require("child_process") as typeof import("child_process");
-const { clipboard } = require("electron") as typeof import("electron");
+const { clipboard, ipcRenderer } = require("electron") as typeof import("electron");
 
 var Store = require("electron-store");
 var store = new Store();
@@ -979,3 +979,17 @@ function calculateCapacity(voltage: number) {
 
     return capacity;
 }
+
+const miniEl = document.getElementById("mini_b");
+const shutdownEl = document.getElementById("shutdown_b");
+const rebootEl = document.getElementById("reboot_b");
+
+miniEl.onclick = () => {
+    ipcRenderer.send("minimize");
+};
+shutdownEl.onclick = () => {
+    exec("shutdown now");
+};
+rebootEl.onclick = () => {
+    exec("reboot");
+};
