@@ -181,6 +181,7 @@ body > #index > div > .icon {
 
 .main > div {
     min-width: 100vw;
+    max-width: 100vw;
     background-color: var(--bg);
 }
 
@@ -322,6 +323,15 @@ code.hljs {
     display: flex;
     overflow-x: auto;
     gap: 4px;
+}
+
+#books_list {
+    display: flex;
+    gap: 0.5em;
+    overflow-x: scroll;
+}
+#books_list > div {
+    flex-shrink: 0;
 }
 
 #history {

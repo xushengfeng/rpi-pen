@@ -37,7 +37,7 @@ indexEl.querySelectorAll("div").forEach((el, i) => {
     };
 });
 function switchToItem(name: string) {
-    let name2i = ["main", "review", "history", "setting"];
+    let name2i = ["main", "review", "books", "history", "setting"];
     let i = name2i.indexOf(name);
     (document.querySelector(".main") as HTMLElement).style.transform = `translateX(${i * -100}vw)`;
 }
@@ -596,6 +596,102 @@ function setReviewCard(id: string, rating: fsrsjs.Rating) {
     let sCards = fsrs.repeat(cards[id].card, now);
     cards[id].card = sCards[rating].card;
 }
+/************************************词书 */
+let books: { [name: string]: string[] } = {};
+let bookRead: { [name: string]: number } = {};
+
+function getBooks() {
+    fs.readFile(path.join(store.path.replace("config.json", ""), "books.json"), "utf-8", (_e, d) => {
+        if (d) {
+            let json = JSON.parse(d);
+            books = json;
+            for (const name in books) {
+                bookRead[name] = 0;
+            }
+            console.log(books);
+            showBooksList();
+        }
+    });
+}
+
+const booksListEl = document.getElementById("books_list");
+const bookDetails = document.getElementById("book_details");
+
+function showBooksList() {
+    booksListEl.innerHTML = "";
+    bookDetails.innerHTML = "";
+    for (const name in books) {
+        let item = document.createElement("div");
+        item.innerText = name;
+        item.onclick = () => {
+            showBook(name);
+        };
+        booksListEl.append(item);
+    }
+}
+
+function showBook(name: string) {
+    bookDetails.innerHTML = "";
+    let lastEl = document.createElement("div");
+    let nextEl = document.createElement("div");
+    lastEl.innerText = "上一页";
+    nextEl.innerText = "下一页";
+    bookDetails.append(lastEl);
+    const d = 10;
+    const startI = bookRead[name];
+    for (let i = d * startI; i < Math.min(books[name].length, d * (startI + 1)); i++) {
+        const word = books[name][i];
+        let item = document.createElement("div");
+        let hasR = false;
+        let card: (typeof cardDetail)[0];
+        for (let i in cardDetail) {
+            if (cardDetail[i].context === word) {
+                hasR = true;
+                card = cardDetail[i];
+                break;
+            }
+        }
+        item.innerText = word;
+        if (hasR) {
+            item.innerText += " - #";
+        }
+        bookDetails.append(item);
+        item.onclick = () => {
+            if (hasR) {
+                let ids = card.sources;
+                if (ids.length === 1) {
+                    jumpToHis(ids[0]);
+                } else {
+                    item.innerHTML = "";
+                    for (let i of ids.toReversed()) {
+                        let t = document.createElement("span");
+                        t.innerText = historyStore.get(i).name;
+                        t.onclick = () => {
+                            jumpToHis(i);
+                        };
+                        item.append(t);
+                    }
+                }
+            } else {
+                newPage();
+                inputEl.value = word;
+                switchToItem("main");
+            }
+        };
+    }
+    bookDetails.append(nextEl);
+
+    lastEl.onclick = () => {
+        bookRead[name] = Math.max(bookRead[name] - 1, 0);
+        showBook(name);
+    };
+    nextEl.onclick = () => {
+        bookRead[name] = Math.min(bookRead[name] + 1, books[name].length);
+        showBook(name);
+    };
+}
+
+getBooks();
 
 /************************************历史 */
 const historyEl = document.getElementById("history");
