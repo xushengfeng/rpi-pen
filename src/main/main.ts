@@ -164,6 +164,9 @@ async function createMainWindow(webPage: string, t?: boolean | Array<any>) {
         ...(dev ? { width: 800, height: 480 } : { fullscreen: true }),
         backgroundColor: nativeTheme.shouldUseDarkColors ? "#0f0f0f" : "#ffffff",
         icon: theIcon,
+        webPreferences: {
+            defaultFontSize: Number(store.get("字体.大小")),
+        },
     });
 
     // 自定义界面
