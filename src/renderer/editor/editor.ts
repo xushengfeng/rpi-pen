@@ -854,13 +854,12 @@ document.querySelectorAll("[data-path]").forEach((el: HTMLElement) => {
 
 const timeSetEl = document.getElementById("time-set") as HTMLInputElement;
 const timeSaveEl = document.getElementById("time-save") as HTMLButtonElement;
-let dTime = 0;
 timeSetEl.value = new Date().toString();
 timeSaveEl.onclick = () => {
-    dTime = new Date(timeSetEl.value).getTime() - new Date().getTime();
+    exec(`sudo date --s="${new Date(timeSetEl.value).toISOString()}"`);
 };
 function getNow() {
-    return new Date(new Date().getTime() + dTime);
+    return new Date();
 }
 
 const tempEl = document.getElementById("cpu_temp");
