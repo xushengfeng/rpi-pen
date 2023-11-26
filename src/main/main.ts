@@ -1,6 +1,16 @@
 /// <reference types="vite/client" />
 // Modules to control application life and create native browser window
-import { app, BrowserWindow, ipcMain, Notification, nativeTheme, screen, crashReporter } from "electron";
+import {
+    app,
+    BrowserWindow,
+    ipcMain,
+    Notification,
+    nativeTheme,
+    screen,
+    crashReporter,
+    Menu,
+    MenuItem,
+} from "electron";
 
 const Store = require("electron-store");
 import { setting } from "../ShareTypes";
@@ -104,6 +114,20 @@ async function rmR(dir_path: string) {
 
 app.commandLine.appendSwitch("enable-experimental-web-platform-features", "enable");
 
+const menu = new Menu();
+menu.append(
+    new MenuItem({
+        label: "Setting",
+        type: "normal",
+        accelerator: "Ctrl+,",
+        click: () => {
+            settingWin();
+        },
+    })
+);
+
+Menu.setApplicationMenu(menu);
+
 app.whenReady().then(() => {
     crashReporter.start({ uploadToServer: false });
 
@@ -115,7 +139,7 @@ app.whenReady().then(() => {
 
     // tmp目录
     if (!fs.existsSync(os.tmpdir() + "/eSearch")) fs.mkdir(os.tmpdir() + "/eSearch", () => {});
-    createMainWindow("editor.html");
+    createMainWindow(path.join(__dirname, "../../public/rmbw2/index.html"));
 
     nativeTheme.themeSource = store.get("全局.深色模式");
 });
@@ -140,6 +164,25 @@ async function createMainWindow(webPage: string, t?: boolean | Array<any>) {
         ...(dev ? { width: 800, height: 480 } : { fullscreen: true }),
         backgroundColor: nativeTheme.shouldUseDarkColors ? "#0f0f0f" : "#ffffff",
         icon: theIcon,
+    });
+
+    // 自定义界面
+    mainWindow.loadFile(path.join(__dirname, "../../public/rmbw2/index.html"));
+
+    await mainWindow.webContents.session.setProxy(store.get("代理"));
+
+    if (dev) mainWindow.webContents.openDevTools();
+
+    mainWindow.webContents.on("did-finish-load", () => {
+        mainWindow.webContents.setZoomFactor(store.get("全局.缩放") || 1.0);
+    });
+}
+
+function settingWin() {
+    let mainWindow = new BrowserWindow({
+        ...(dev ? { width: 800, height: 480 } : { fullscreen: true }),
+        backgroundColor: nativeTheme.shouldUseDarkColors ? "#0f0f0f" : "#ffffff",
+        icon: theIcon,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
@@ -148,9 +191,7 @@ async function createMainWindow(webPage: string, t?: boolean | Array<any>) {
     });
 
     // 自定义界面
-    rendererPath(mainWindow, webPage || "editor.html");
-
-    await mainWindow.webContents.session.setProxy(store.get("代理"));
+    rendererPath(mainWindow, "editor.html");
 
     if (dev) mainWindow.webContents.openDevTools();
 
